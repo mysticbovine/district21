@@ -1,0 +1,58 @@
+global-styling:
+  css:
+    theme:
+      css/style.css: {}
+      //cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css: {}
+      css/district96_b5.css: {}
+  js:
+    js/scripts.js: {}
+
+csv2table:
+  version: 1.x
+  js:
+    js/tablejs/csv2table.min.js: {}
+    js/tablejs/config.js: {}
+  dependencies:
+    - core/jquery
+
+tablesorter:
+  version: 1.x
+  css:
+    theme:
+      libraries/tablesorter/css/theme.default.min.css: {}
+      libraries/tablesorter/css/theme.bootstrap.min.css: {}
+      libraries/tablesorter/css/theme.bootstrap_3.min.css: {}
+  js:
+    libraries/tablesorter/js/jquery.tablesorter.min.js: {}
+    libraries/tablesorter/js/jquery.tablesorter.widgets.min.js: {}
+    libraries/tablesorter/js/parsers/parser-date-weekday.min.js: {}
+    libraries/tablesorter/tablesorter.settings.js: {}
+  dependencies:
+    - core/jquery
+
+fullcalendar:
+  version: 1.x
+  css:
+    theme:
+      libraries/fullcalendar/lib/fullcalendar.min.css: {}
+  js:
+    https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.js: {}
+    https://unpkg.com/popper.js/dist/umd/popper.min.js: {}
+    https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js: {}
+    libraries/fullcalendar/lib/fullcalendar.min.js: {}
+  dependencies:
+    - core/jquery
+
+eventcalendar:
+  version: 1.x
+  js:
+    libraries/fullcalendar/lib/events.js: {}
+  dependencies:
+    - distrct96_b5/fullcalendar
+
+trainingcalendar:
+  version: 1.x
+  js:
+    libraries/fullcalendar/lib/training.js: {}
+  dependencies:
+    - distrct96_b5/fullcalendar

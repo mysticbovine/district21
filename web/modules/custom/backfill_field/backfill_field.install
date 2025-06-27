@@ -1,0 +1,50 @@
+<?php
+/**
+ * @file
+ * Back‑fill field_district on leader_role paragraphs.
+ */
+
+function backfill_field_update_9101() {
+  $bundle     = 'leader_role';
+  $field      = 'field_district';
+  $value      = 96;  // or ['target_id' => 96] if it’s an entity reference
+
+  $storage = \Drupal::entityTypeManager()->getStorage('paragraph');
+  $items   = $storage->loadByProperties(['type' => $bundle]);
+  $count   = 0;
+
+  foreach ($items as $p) {
+    if ($p->get($field)->isEmpty()) {
+      $p->set($field, $value);
+      $p->save();
+      $count++;
+    }
+  }
+  return t('Back‑filled @count paragraphs.', ['@count' => $count]);
+}
+/**
+ * Post‑update: backfill field_district on leader_role paragraphs.
+ */
+function backfill_field_post_update_fill_district(&$sandbox) {
+  $bundle     = 'leader_role';
+  $field      = 'field_district';
+  $default    = 96;
+  // If it’s an entity reference, use: $value = ['target_id' => $default];
+  $value      = $default;
+
+  $storage = \Drupal::entityTypeManager()->getStorage('paragraph');
+  $items   = $storage->loadByProperties(['type' => $bundle]);
+  $count   = 0;
+  foreach ($items as $p) {
+    if ($p->get($field)->isEmpty()) {
+      $p->set($field, $value);
+      $p->save();
+      $count++;
+    }
+  }
+
+  return t('Back‑filled @count leader_role paragraphs with @default.', [
+    '@count'   => $count,
+    '@default' => $default,
+  ]);
+}

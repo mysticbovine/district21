@@ -1,0 +1,5 @@
+name: Backfill District
+type: module
+description: 'Provides an update hook to backfill field_district on existing leader_role paragraphs.'
+core_version_requirement: ^9 || ^10 || ^11
+package: Custom

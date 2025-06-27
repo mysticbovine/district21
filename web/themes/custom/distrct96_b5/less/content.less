@@ -1,0 +1,436 @@
+// main: "district96_b5.less", compress: true, sourceMap: true
+//
+@import 'variables';
+
+.page-title{
+    font-size: 2em;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+.field--name-field-lead-text{
+    font-size: 1.25rem;
+    font-weight: 300;
+    margin-bottom: 16px;
+}
+.field--name-body{
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+.field--name-field-category, .field--name-field-leader-division, .field--name-field-leader-area {
+    a{
+        border-radius: 0;
+        font-size: 15px;
+        line-height: 31px;
+        padding: 0 11px 0 8px;
+        background-color: #000;
+        color: #fff;
+        text-transform: uppercase;
+        font-weight: bold;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        min-width: 200px;
+        text-align: center;
+        display: inline-block;
+        &:hover {
+            background-color: lighten( #000, 15%);
+            color: #fff;
+        }
+    }
+} 
+.field--name-field-presentation-topu {
+    .field__item{
+        margin-bottom: 10px;
+    }
+}
+.shareto{
+    border-radius: 4px;
+    border: 1px solid lighten(@grey, 15%);
+    background-color: lighten(@grey, 25%);
+    padding: 16px;
+    display: inline-block;
+    span {
+        display: inline-block;
+    }
+    .social-sharing-buttons {
+        margin:0;
+    }
+}
+.path-node{
+    &.page-node-type-article,
+    &.page-node-type-news,
+    &.page-node-type-resources{
+        .region-content{
+            border-radius: 4px;
+            border: 1px solid lighten(@grey, 15%);
+            padding: 24px;
+            
+            @media (min-width: 992px) {  
+                margin-right: 24px; 
+            }
+           
+        }
+    } 
+}
+//Tags
+.field--name-field-tags{
+  
+    // .field__label{
+    //     margin-bottom: 20px;
+    // }
+    .field__items{      
+        .field__item{
+            display: inline-block;
+            a{                
+                border-radius: 4px;
+                border: 1px solid lighten(@grey, 15%);
+                background-color: lighten(@grey, 25%);
+                padding: 16px;
+                display: inline-block;
+                margin-right: 16px;
+                text-decoration: none;
+                color: @text;
+                &:hover{
+                    background-color: lighten(@grey, 15%);
+                    text-decoration: underline;
+                }
+            }
+            
+        }
+    }
+}
+.field--name-field-file-upload,
+.field--name-field-news-source {
+    margin-bottom: 24px;
+}
+footer {
+    &.node__meta{
+        padding: 0;
+    }
+}
+
+// home page block for new, resource and articles
+.view-recent-news-and-posts {
+    &.view-display-id-block_1{
+      
+        .description {
+            .body{
+                display: none;
+            }
+        }
+        .first{
+   
+            .views-field-field-image{
+                min-width: 50%;
+            }
+            .views-field.views-field-nothing {
+                min-width: 50%;
+            }
+            .description {
+                padding-left: 15px;
+
+                .body{
+                    margin-top: 10px;
+                    display: block;
+                }
+            }
+            h3 {
+                margin-top: 0;
+                font-size: 1.75em;
+            }
+        }
+        legend {
+            display: none;
+        }
+        fieldset.form-item{
+            border: 0;
+        }
+        .byline{
+            font-size: .9em;
+            padding-bottom: .5rem;
+            span {
+                padding-right: 16px;
+            }
+            i.bi-person-fill{
+                font-size: 1em;
+            }
+        }  
+        h3 {
+            font-size: 1.25em;
+            margin-top: 20px;
+            a {
+                color: @text;
+                text-decoration: none;
+                &:hover{
+                    color: darken(@text, 20%);
+                    text-decoration: underline;
+                }
+            }
+        }
+  
+        // filter    
+        .bef-exposed-form .form--inline > .form-item {
+            float: left;
+            display: inline-flex;
+            width: 100%;
+        }
+        label {
+            display: block;
+            white-space: nowrap;
+            padding: 10px 10px 10px 0;
+            font-weight: bold;
+        }
+        .bef-links{
+            ul {
+                display: inline-block;
+                padding-left: 0;
+                margin-left: 0;
+                li {
+                    display: inline-block;
+                    padding: 10px 10px 10px 0;
+                }
+            }
+            a.bef-link{
+                color: fade(@text, 80%);
+                text-decoration: none;
+                padding: 5px 10px;
+                transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+                &:hover, &.bef-link--selected {
+                    color: @text;
+                    border-bottom: 2px solid @burgundy;
+                }
+            }
+            
+        }
+        .form-select{
+            border: none;
+            background-image: unset;
+            padding: 0;
+            margin: 0;
+        }
+    }
+}
+/*.view-recent-news-and-posts{
+// All items
+
+
+}*/
+// Speakers Bureau
+.view-district-leadership-history,
+.view-leader-award-history,
+.view-speakers-bureau,
+.view-hall-of-fame-member{
+
+    .views-row{
+        @media (min-width: 1200px) {  width: 300px; }
+    }
+    .img-circle img{
+        border: 2px solid @burgundy;
+        border-radius: 50%;
+    }
+    .views-field-nothing{
+        @media (min-width: 1200px) {  width: 300px; }
+        text-align: center;
+    }
+    h3 {
+        p {
+            font-size: 1em
+        }
+    }
+}
+.division {
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-justify-content: space-around;
+    -ms-flex-pack: justify;
+    justify-content: space-around;
+    -webkit-align-content: flex-start;
+    -ms-flex-line-pack: start;
+    align-content: flex-start;
+    -webkit-align-items: flex-start;
+    -ms-flex-align: start;
+    align-items: flex-start;
+    .leader {
+        width: 300px;
+        text-align: center;
+    }
+    .views-field-field-leader-image{
+        img{
+            border: 2px solid @burgundy;
+            border-radius: 50%;
+        }
+    }
+    .views-field-title{
+        font-size: 1.5em;
+    }
+    h3{
+        width: 100%;
+        font-size: 2.5em;
+        TEXT-ALIGN: center;
+        padding: 30px 0 20px 0;
+    }
+   
+}
+//node--type-leader 
+.node--type-leader{
+    .field--name-field-leader-image {
+        text-align: center;
+    }
+    img {
+        border: 2px solid @burgundy;
+        border-radius: 50%;
+    }
+}
+//  Menu Button Row
+.block-inline-blockbutton-row{
+
+
+    .field--name-field-icon-buttons{
+        text-align: center;
+      
+        .field__item{
+            position: relative;
+        }
+        i {
+            font-size: 20px;
+            color: #fff;
+            @media (min-width: 768px) { font-size: 30px; }
+            @media (min-width: 992px) { font-size: 40px; }
+        }
+        a{
+            font-size: 16px;
+            color: #fff;
+            text-decoration: none;
+            display: block;
+            @media (min-width: 768px) { font-size: 20px; }
+            @media (min-width: 992px) { font-size: 20px; }
+        }
+        .opacity-1{
+            background: fade(#fff, 0%);
+            &:hover {
+                background: fade(#fff, 10%);
+            }
+        }
+        .opacity-2{
+            background: fade(#fff, 10%);
+            &:hover {
+                background: fade(#fff, 20%);
+            }
+        }
+        .opacity-3{
+            background: fade(#fff, 15%);
+            &:hover {
+                background: fade(#fff, 25%);
+            }
+        }
+        .opacity-4{
+            background: fade(#fff, 20%);
+            &:hover {
+                background: fade(#fff, 30%);
+            }
+        }
+        .opacity-5{
+            background: fade(#fff, 25%);
+            &:hover {
+                background: fade(#fff, 35%);
+            }
+        }
+    }
+    &.bg-yellow, &.bg-grey{
+       
+        .field--name-field-icon-buttons{
+             color:  fade(@black, 70%);
+             &:hover {
+                color: @black;
+            }
+            a { 
+                color: fade(@black, 70%);
+                &:hover {
+                    color: @black;
+                }
+            }
+            .opacity-1{
+                background: fade(@black, 0%);
+                &:hover {
+                    background: fade(@black, 10%);
+                }
+            }
+            .opacity-2{
+                background: fade(@black, 10%);
+                &:hover {
+                    background: fade(@black, 20%);
+                }
+            }
+            .opacity-3{
+                background: fade(@black, 15%);
+                &:hover {
+                    background: fade(@black, 25%);
+                }
+            }
+            .opacity-4{
+                background: fade(@black, 20%);
+                &:hover {
+                    background: fade(@black, 30%);
+                }
+            }
+            .opacity-5{
+                background: fade(@black, 25%);
+                &:hover {
+                    background: fade(@black, 35%);
+                }
+            }
+        }
+       
+    }
+}
+
+// Upcoming Events list
+.view-id-upcoming_events_and_dates_2023,
+.view-id-popular_posts_2023{
+    .views-row{
+        margin-top: .5em;
+        margin-bottom: .75em;
+    }
+    label {
+        display: block;
+        white-space: nowrap;
+        padding: 10px 10px 10px 0;
+        font-weight: bold;
+    }
+    .bef-exposed-form .form--inline > .form-item {
+        float: left;
+        display: inline-flex;
+        width: 100%;
+    }
+    .views-field-title{
+        a {
+            color: @text;
+            font-weight: bold;
+            text-decoration: none;
+            padding-bottom: 20px;
+            &:hover{
+                color: darken(@text, 20%);
+                text-decoration: underline;
+            }
+        }
+    }
+    .views-field-field-date-event-value {
+        font-weight: bold;
+    }
+    .views-field-field-date-4,.views-field-nothing,.views-field-field-meeting-type, .views-field-type{
+       font-size: 14px;
+       color: fade(@text, 80%);
+    }
+    .byline {
+        span {
+            padding-right: 4px;
+        }
+    }
+}
