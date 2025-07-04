@@ -53,16 +53,29 @@
   ]
 %}
 
+{# Assuming item.content is a render array for a link field #}
+{# item.url and item.title may be available depending on the field setup #}
+
+
+
+
+
+
+
 {% if label_hidden %}
   {% if multiple %}
    
       {% for item in items %}
-        {{ item.content }}
+        {% set url = item.content['#url'] %}
+        {% set title = item.content['#title'] %}
+        <a href="{{ url }}" class="stretched-link">{{ title }}</a>
       {% endfor %}
 
   {% else %}
     {% for item in items %}
-     {{ item.content }}
+      {% set url = item.content['#url'] %}
+      {% set title = item.content['#title'] %}
+      <a href="{{ url }}" class="stretched-link">{{ title }}</a>
     {% endfor %}
   {% endif %}
 {% else %}
@@ -71,7 +84,9 @@
    
     {% endif %}
     {% for item in items %}
-      {{ item.content }}
+      {% set url = item.content['#url'] %}
+      {% set title = item.content['#title'] %}
+      <a href="{{ url }}" class="stretched-link">{{ title }}</a>
     {% endfor %}
     {% if multiple %}
 
