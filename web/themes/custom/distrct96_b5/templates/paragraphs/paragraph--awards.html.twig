@@ -53,6 +53,13 @@
         <div class="card-body">
           <h5 class="card-title">{{ content.field_award_name }}</h5>
           <h6 class="card-subtitle mb-2 text-muted">{{ content.field_award_date }}</h6>
+          <div class="card-text">District
+            {% if content.field_district|render|striptags|trim is not empty %}
+              {{ content.field_district|render|striptags|trim }}
+            {% else %}
+              96
+            {% endif %}
+          </div>
           <div class="card-text">{{ content.field_award_comments }}</div>
         </div>
       </div>
