@@ -1,48 +1,63 @@
 /**
  * @file
- * FullCalendar with single-select category filters (Drupal 10).
+ * FullCalendar (v5.11 compatible) with single-select category filter. B
  *
- * Requirements:
- * - A button group with buttons having class ".fc-filter-btn"
- *   and a data attribute data-cat matching event.extendedProps.category.
- *   Example button markup:
- *     <div id="filterEventsGroup" class="btn-group" role="group">
- *       <button class="btn btn-primary fc-filter-btn active" data-cat="category-904" aria-pressed="true">Training</button>
- *       <button class="btn btn-outline-primary fc-filter-btn" data-cat="category-3" aria-pressed="false">Club Meetings</button>
- *       <button class="btn btn-outline-primary fc-filter-btn" data-cat="category-1" aria-pressed="false">District Events</button>
- *       <button class="btn btn-outline-primary fc-filter-btn" data-cat="category-8" aria-pressed="false">Contests</button>
- *       <!-- Optional: <button class="btn btn-outline-primary fc-filter-btn" data-cat="all">All</button> -->
- *     </div>
- * - A calendar container with id="calendar".
+ * - Default filter is whichever .fc-filter-btn has "active" in your HTML block.
+ * - Global singleton guard prevents duplicate calendars.
+ * - Uses eventDataTransform so the initial render is filtered.
+ * - Guarantees only ONE event source (dedupes on every load).
  */
-
- /**
- * @file
- * FullCalendar with single-select category filters (Drupal 10).
- *
- * The default filter is determined by which .fc-filter-btn
- * has the "active" class in the HTML markup.
- */
-(function (Drupal, once) {
+ (function (Drupal, once) {
   'use strict';
 
   Drupal.behaviors.calendarWithSingleFilter = {
     attach(context, settings) {
+      // Hard singleton: never create more than one calendar.
+      if (window.__fcCalendarInstance) {
+        // console.warn('[calendar] init skipped: instance already exists.');
+        return;
+      }
+
       const calendarEls = once('fc-init', '#calendar', context);
       if (!calendarEls.length) return;
+      const el = calendarEls[0];
 
-      const filterGroupEls = once('fc-filter-init', '#filterEventsGroup', context);
-      const filterGroup = filterGroupEls[0] || context.querySelector('#filterEventsGroup');
-      const filterButtons = filterGroup ? filterGroup.querySelectorAll('.fc-filter-btn') : [];
+      if (document.querySelectorAll('#calendar').length > 1) {
+        console.warn('[calendar] Multiple #calendar elements found; aborting to avoid duplicates.');
+        return;
+      }
 
-      // --- Find the default from the HTML: the button with .active
-      const defaultBtn = filterGroup?.querySelector('.fc-filter-btn.active');
-      let activeCategory = defaultBtn ? defaultBtn.getAttribute('data-cat') : 'all';
+      // ---------- Helpers ----------
+      const FEED_URL = '/event/calendar-feed.json';
 
-      function updateButtonsUI() {
-        filterButtons.forEach(btn => {
-          const cat = btn.getAttribute('data-cat');
-          const isOn = (cat === activeCategory);
+      function norm(val) {
+        if (val == null) return '';
+        const s = String(val).trim().toLowerCase();
+        if (s === 'all') return 'all';
+        const m = s.match(/\d+/);
+        return m ? m[0] : s;
+      }
+
+      function getFilterGroup() {
+        return document.getElementById('filterEventsGroup') || null;
+      }
+
+      function readDefaultFromMarkup() {
+        const group = getFilterGroup();
+        if (!group) return null;
+        const btn = group.querySelector('.fc-filter-btn.active');
+        return btn ? (btn.getAttribute('data-cat') || 'all') : 'all';
+      }
+
+      let activeCategoryRaw = readDefaultFromMarkup() || 'all';
+      let activeCategory = norm(activeCategoryRaw);
+      let buttonsWired = false;
+
+      function updateButtonsUI(group) {
+        const buttons = group.querySelectorAll('.fc-filter-btn');
+        buttons.forEach(btn => {
+          const catRaw = btn.getAttribute('data-cat') || 'all';
+          const isOn = norm(catRaw) === activeCategory;
           btn.classList.toggle('active', isOn);
           btn.classList.toggle('btn-primary', isOn);
           btn.classList.toggle('btn-outline-primary', !isOn);
@@ -50,8 +65,37 @@
         });
       }
 
-      const el = calendarEls[0];
+      function wireButtonsIfPresent() {
+        const group = getFilterGroup();
+        if (!group) return false;
 
+        const buttons = group.querySelectorAll('.fc-filter-btn');
+
+        if (!buttonsWired) {
+          const fromMarkup = readDefaultFromMarkup();
+          if (fromMarkup) {
+            activeCategoryRaw = fromMarkup;
+            activeCategory = norm(activeCategoryRaw);
+          }
+        }
+
+        buttons.forEach(btn => {
+          if (btn.dataset.wired === '1') return;
+          btn.dataset.wired = '1';
+          btn.addEventListener('click', () => {
+            activeCategoryRaw = btn.getAttribute('data-cat') || 'all';
+            activeCategory = norm(activeCategoryRaw);
+            updateButtonsUI(group);
+            applyFilter(); // update current events
+          });
+        });
+
+        updateButtonsUI(group);
+        buttonsWired = true;
+        return true;
+      }
+
+      // ---------- Calendar ----------
       const calendar = new FullCalendar.Calendar(el, {
         headerToolbar: {
           left: 'prev,next today',
@@ -61,6 +105,21 @@
         navLinks: true,
         editable: false,
         dayMaxEvents: true,
+
+        // Filter every event before it is rendered.
+        eventDataTransform(raw) {
+          const fromMarkup = readDefaultFromMarkup();
+          if (fromMarkup) {
+            activeCategoryRaw = fromMarkup;
+            activeCategory = norm(activeCategoryRaw);
+          }
+          const evCat = norm(
+            (raw.extendedProps && (raw.extendedProps.category ?? raw.extendedProps.Category ?? raw.extendedProps.type))
+            ?? raw.category ?? raw.className
+          );
+          const show = (activeCategory === 'all') || (evCat === activeCategory);
+          return Object.assign({}, raw, { display: show ? 'auto' : 'none' });
+        },
 
         eventDidMount(arg) {
           if (window.bootstrap && bootstrap.Tooltip) {
@@ -80,51 +139,76 @@
           }
         },
 
-        events: {
-          url: '/event/calendar-feed.json',
-          failure() {
-            const warn = document.getElementById('script-warning');
-            if (warn) warn.style.display = 'block';
+        // Use a single, named event source so we can dedupe if anything adds another.
+        eventSources: [
+          {
+            id: 'main-feed',
+            url: FEED_URL,
+            failure() {
+              const warn = document.getElementById('script-warning');
+              if (warn) warn.style.display = 'block';
+            }
           }
-        },
+        ],
 
-        // One-time initial filter after load completes
+        // After each fetch completes (including nav), re-apply filter and ensure only one source exists.
         loading(isLoading) {
           const loadingEl = document.getElementById('loading');
-          const calEl = document.getElementById('calendar');
           if (loadingEl) loadingEl.style.display = isLoading ? 'block' : 'none';
-          if (calEl) calEl.style.visibility = isLoading ? 'hidden' : 'visible';
+          el.style.visibility = isLoading ? 'hidden' : 'visible';
 
-          if (!isLoading && !calendar.__didInitialFilter) {
-            calendar.__didInitialFilter = true;
+          if (!isLoading) {
+            wireButtonsIfPresent();
+            ensureSingleEventSource();
             applyFilter();
           }
         }
       });
 
+      // Singleton for safety/debug
+      window.__fcCalendarInstance = calendar;
+
+      // If the filter block isn’t present yet, watch briefly and wire when it appears.
+      if (!wireButtonsIfPresent()) {
+        const observer = new MutationObserver((muts, obs) => {
+          if (wireButtonsIfPresent()) obs.disconnect();
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+        setTimeout(() => observer.disconnect(), 10000);
+      }
+
       function applyFilter() {
-        const events = calendar.getEvents();
+        const evs = calendar.getEvents();
         calendar.batchRendering(() => {
-          for (const ev of events) {
-            const cat = ev.extendedProps && String(ev.extendedProps.category).trim();
-            const show = (activeCategory === 'all' || activeCategory === cat);
+          for (const ev of evs) {
+            const evCat = norm(
+              (ev.extendedProps && (ev.extendedProps.category ?? ev.extendedProps.Category ?? ev.extendedProps.type)) ?? ''
+            );
+            const show = (activeCategory === 'all') || (evCat === activeCategory);
             ev.setProp('display', show ? 'auto' : 'none');
           }
         });
       }
 
-      // Click handler: only one active at a time
-      filterButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          activeCategory = btn.getAttribute('data-cat') || 'all';
-          updateButtonsUI();
-          applyFilter();
-        });
-      });
+      // Keep only one event source with our FEED_URL.
+      function ensureSingleEventSource() {
+        const sources = calendar.getEventSources();
+        const matching = sources.filter(s => s.url === FEED_URL);
+        if (matching.length > 1) {
+          // Keep the first, remove the rest.
+          for (let i = 1; i < matching.length; i++) {
+            matching[i].remove();
+          }
+          // Optionally refetch to normalize state:
+          // matching[0].refetch();
+          // console.warn('[calendar] Removed duplicate event sources:', matching.length - 1);
+        }
+      }
 
       calendar.render();
-      updateButtonsUI(); // syncs UI with whatever was in the markup
-      // applyFilter() runs once after load
+
+      // Also run a dedupe immediately after render (in case something raced).
+      ensureSingleEventSource();
     }
   };
 })(Drupal, once);
