@@ -1,6 +1,6 @@
 /**
  * @file
- * FullCalendar (v5.11 compatible) with single-select category filter. B
+ * FullCalendar (v5.11 compatible) with single-select category filter.
  *
  * - Default filter is whichever .fc-filter-btn has "active" in your HTML block.
  * - Global singleton guard prevents duplicate calendars.
