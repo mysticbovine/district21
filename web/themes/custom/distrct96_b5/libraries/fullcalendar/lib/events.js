@@ -155,6 +155,55 @@
   
         window.__fcCalendarInstance = calendar;
         calendar.render();
+
+        // Count events once after first load and label buttons
+        calendar.on('eventsSet', (events) => {
+          if (calendar.__countersDone) return;
+          calendar.__countersDone = true;
+        
+          const counts = {};
+          events.forEach(ev => {
+            const evCat = norm(
+              (ev.extendedProps && (ev.extendedProps.category ?? ev.extendedProps.Category ?? ev.extendedProps.type)) 
+              ?? ev.category ?? ev.className
+            );
+            counts[evCat] = (counts[evCat] || 0) + 1;
+          });
+        
+          const total = events.length;
+        
+          const group = getFilterGroup();
+          if (group) {
+            group.querySelectorAll('.fc-filter-btn').forEach(btn => {
+              const raw = btn.getAttribute('data-cat') || 'all';
+              const cat = norm(raw);
+              const num = (cat === 'all') ? total : (counts[cat] || 0);
+        
+              if (!btn.dataset.counted) {
+                // keep existing button label
+                const label = btn.textContent.trim();
+        
+                // replace button content with label + badge
+                btn.innerHTML = `
+                  ${label}
+                  <span class="badge rounded-pill bg-danger">
+                    ${num}
+                    <span class="visually-hidden">Total events</span>
+                  </span>
+                `;
+        
+                btn.dataset.counted = '1';
+              }
+        
+              // Disable if count is 0 (except "all")
+              if (cat !== 'all' && num === 0) {
+                btn.disabled = true;
+                btn.classList.add('disabled'); // optional styling hook
+              }
+            });
+          }
+        });
+        
   
         // Filter: hide/show current events based on 'active'.
         function applyFilter() {
