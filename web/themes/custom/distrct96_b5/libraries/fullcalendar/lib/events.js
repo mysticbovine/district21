@@ -186,7 +186,7 @@
                 // replace button content with label + badge
                 btn.innerHTML = `
                   ${label}
-                  <span class="badge rounded-pill bg-danger">
+                  <span class="badge rounded-pill bg-info">
                     ${num}
                     <span class="visually-hidden">Total events</span>
                   </span>
