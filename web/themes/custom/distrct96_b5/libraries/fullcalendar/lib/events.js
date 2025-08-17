@@ -7,7 +7,7 @@
  * - Uses eventDataTransform so the initial render is filtered.
  * - Guarantees only ONE event source (dedupes on every load).
  */
- (function (Drupal, once) {
+(function (Drupal, once) {
   'use strict';
 
   Drupal.behaviors.calendarWithSingleFilter = {
