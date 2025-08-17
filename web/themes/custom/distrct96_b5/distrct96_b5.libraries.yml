@@ -42,6 +42,7 @@ fullcalendar:
     libraries/fullcalendar/lib/fullcalendar.min.js: {}
   dependencies:
     - core/jquery
+    - core/once
 
 eventcalendar:
   version: 1.x
