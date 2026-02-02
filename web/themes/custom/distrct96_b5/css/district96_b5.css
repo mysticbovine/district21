@@ -629,6 +629,23 @@ button.navbar-toggler {
 .path-leaders .area-division .views-field-nothing:first-child {
   width: 100%;
 }
+.district-history .view-grouping-header {
+  font-size: 1.75rem;
+  border-bottom: 1px solid #ccc;
+  background: #333;
+  color: #fff;
+  padding: 15px 10px 10px;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: 600;
+}
+.district-history .view-grouping-content h3 {
+  margin-top: 0;
+  font-size: 1.5rem;
+  background-color: transparent;
+  color: #333;
+  border-bottom: none;
+}
 .path-leaders,
 .path-speaker-bureau,
 .path-district-director-team,
